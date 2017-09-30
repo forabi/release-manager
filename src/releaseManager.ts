@@ -35,11 +35,10 @@ server.use(async (req, res) => {
 
     env = await getEnvForBranchPreview(branch).catch(noop);
     if (env) {
+      res.clearCookie(trafficSplittingCookieName);
       res.cookie(branchPreviewCookieName, env.name, {
         maxAge: 2 * 60 * 60 * 1000,
       });
-    } else {
-      res.clearCookie(branchPreviewCookieName);
     }
   }
 
@@ -47,6 +46,7 @@ server.use(async (req, res) => {
     env = await getEnvForTrafficSplitting(
       req.cookies[trafficSplittingCookieName],
     );
+    res.clearCookie(branchPreviewCookieName);
     res.cookie(trafficSplittingCookieName, env.name, {
       maxAge: 24 * 60 * 60 * 1000,
     });
